@@ -66,7 +66,6 @@ export default function Page() {
         if (error != null) {
           showError("Error Can you please check you email or Password");
         } else {
-          console.log(data);
           const userDetails = data?.user?.identities;
           setWithExpiry("user", userDetails, 7 * 24 * 60 * 60 * 1000);
 
@@ -74,7 +73,8 @@ export default function Page() {
           setTimeout(() => {
             setMessage({ sucess: false, message: "" });
           }, 1000);
-          navigate.replace("/user");
+          sessionStorage.setItem("visited", JSON.stringify({visit:false}));
+          navigate.replace("/");
         }
       } catch (error) {
         showError("Error Occuring while login ");

@@ -37,7 +37,7 @@ export default function Page() {
   }
 
   return (
-    <div className="w-full min-h-screen  flex flex-col items-center p-1">
+    <div className="w-full min-h-screen  flex flex-col items-center p-0 m-0">
       <NavBar />
 
       <div className="w-full flex flex-col items-center">
