@@ -6,22 +6,11 @@ import { FaTelegram } from "react-icons/fa";
 import { IoLogoWhatsapp } from "react-icons/io";
 import { removeItem } from "@/utils/storage";
 import { useRouter } from "next/navigation";
-
-export interface User {
-  id: string;
-  email: string;
-  created_at: string;
-  updated_at: string;
-  last_sign_in_at: string;
-  phone: string;
-  name: string;
-  provider: string;
-  identity_id: string;
-}
-
+import { user } from "../utils/types";
 interface UserDetailsProps {
-  user: User;
+  user: user;
 }
+
 
 export default function UserDetails({ user }: UserDetailsProps) {
   const router = useRouter();

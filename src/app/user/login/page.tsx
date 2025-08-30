@@ -9,30 +9,17 @@ import { useRouter } from "next/navigation";
 import supabase from "@/utils/client";
 import Loading from "@/components/loading";
 import { setWithExpiry, getWithExpiry } from "@/utils/storage";
-
-interface Details {
-  email: string;
-  password: string;
-}
-
-interface ErrorDetails {
-  error?: boolean;
-  sucess?: boolean;
-  message: string;
-}
+import { errorDetails, loginDetails } from "@/utils/types";
 
 export default function Page() {
-  useEffect(() => {
-    const data = getWithExpiry("user");
-  }, []);
-  const [userData, setUserData] = useState<Details>({
+  const [userData, setUserData] = useState<loginDetails>({
     email: "",
     password: "",
   });
   const navigate = useRouter();
 
   const [visible, setVisible] = useState(false);
-  const [message, setMessage] = useState<ErrorDetails>({
+  const [message, setMessage] = useState<errorDetails>({
     error: false,
     sucess: false,
     message: "",
@@ -79,14 +66,15 @@ export default function Page() {
         if (error != null) {
           showError("Error Can you please check you email or Password");
         } else {
+          console.log(data);
           const userDetails = data?.user?.identities;
           setWithExpiry("user", userDetails, 7 * 24 * 60 * 60 * 1000);
 
           setMessage({ sucess: true, message: "Login successful" });
           setTimeout(() => {
             setMessage({ sucess: false, message: "" });
-          }, 2000);
-          setTimeout(() => navigate.replace("/user"), 1000);
+          }, 1000);
+          navigate.replace("/user");
         }
       } catch (error) {
         showError("Error Occuring while login ");
