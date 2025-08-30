@@ -1,4 +1,4 @@
 "use client";
 export default function Error() {
-  return <div></div>;
+  return <div>Error</div>;
 }

@@ -1,3 +1,5 @@
+"use client";
+
 import Lottie from "lottie-react";
 import loadingData from "../animations/l1.json";
 
