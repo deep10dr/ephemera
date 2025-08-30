@@ -4,7 +4,6 @@ import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { getUserWithExpiry } from "@/utils/storage";
 import AlertUser from "@/components/AlertUser";
-import UserDetails from "@/components/UserDetail";
 import { Mail, Phone, Clock, Shield, LogOut } from "lucide-react";
 import Image from "next/image";
 import { FaFacebook } from "react-icons/fa";
@@ -16,7 +15,6 @@ import { user } from "@/utils/types";
 
 export default function Page() {
   const router = useRouter();
-  // const { logout } = AppProvider();
   const [userData, setUserData] = useState<user | null>(null);
   useEffect(() => {
     const data = getUserWithExpiry("user");

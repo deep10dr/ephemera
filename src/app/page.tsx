@@ -7,12 +7,11 @@ import { SiNextbilliondotai } from "react-icons/si";
 import { motion, AnimatePresence } from "framer-motion";
 import { useRouter } from "next/navigation";
 const Lottie = dynamic(() => import("lottie-react"), { ssr: false });
-
+import { getUserWithExpiry } from "@/utils/storage";
 // Import JSON only once
 import source from "../animations/secure.json";
 import source1 from "../animations/secure1.json";
 import source2 from "../animations/secure2.json";
-
 
 export default function Page() {
   const data = useMemo(() => [source, source1, source2], []);
@@ -27,6 +26,15 @@ export default function Page() {
   const handlePrev = useCallback(() => {
     setCurrent((prev) => (prev === 0 ? data.length - 1 : prev - 1));
   }, [data.length]);
+
+  function navigate() {
+    const user_id = getUserWithExpiry("user");
+    if (user_id != null) {
+      navigation.push(`/${user_id.id}`);
+    } else {
+      navigation.push("/user");
+    }
+  }
 
   return (
     <div className="w-full min-h-screen  flex flex-col items-center p-1">
@@ -87,9 +95,7 @@ export default function Page() {
           </div>
 
           <motion.button
-            onClick={() => {
-              navigation.push("/user");
-            }}
+            onClick={navigate}
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
             className="px-8 py-3 rounded-2xl text-black font-bold flex items-center 
