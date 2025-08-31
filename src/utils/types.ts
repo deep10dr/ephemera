@@ -20,3 +20,10 @@ export interface loginDetails {
   email: string;
   password: string;
 }
+
+export interface AddDetails {
+  name: string;
+  pin: string;
+  expiry_date: string; 
+  file_url: string;
+}
