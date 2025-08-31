@@ -9,9 +9,12 @@ import { RiRefreshFill } from "react-icons/ri";
 import { getUserWithExpiry } from "@/utils/storage";
 import { GiSecretBook } from "react-icons/gi";
 import { IoMdCloseCircle } from "react-icons/io";
-import { AddDetails, errorDetails } from "@/utils/types";
+import { AddDetails, errorDetails, retriveDataDetails } from "@/utils/types";
 import { AnimatePresence, motion } from "framer-motion";
-import { encryptLink, decryptLink } from "@/utils/crypto";
+import { encryptLink } from "@/utils/crypto";
+import { MdAccessTimeFilled } from "react-icons/md";
+import { FaFileShield } from "react-icons/fa6";
+import { SiChainguard } from "react-icons/si";
 
 export default function Page() {
   const params = useParams();
@@ -27,6 +30,9 @@ export default function Page() {
     expiry_date: "",
     file_url: "",
   });
+  const [retriveFiles, setRetriveFiles] = useState<Array<retriveDataDetails>>(
+    []
+  );
   const today = new Date().toISOString().split("T")[0];
   const [message, setMessage] = useState<errorDetails>({
     message: "",
@@ -52,6 +58,7 @@ export default function Page() {
 
       return () => clearTimeout(timer);
     }
+    retriveData();
   }, []);
 
   function handleChange(e: React.ChangeEvent<HTMLInputElement>) {
@@ -160,12 +167,12 @@ export default function Page() {
   async function retriveData() {
     const { data, error } = await supabase
       .from("files")
-      .select("data_link,name,expiry_date")
+      .select("data_link,name,expiry_date,id")
       .eq("user_id", id);
     if (error) {
       console.error("Error fetching data:", error);
     } else {
-      console.log(data[1]);
+      setRetriveFiles(data);
     }
   }
 
@@ -173,7 +180,6 @@ export default function Page() {
     <div className="w-full min-h-screen p-0 m-0 relative bg-[#0F172A] text-white">
       <NavBar />
 
-      {/* "Use to show the error and sucess" */}
       <AnimatePresence>
         {(message.error || message.sucess) && (
           <motion.div
@@ -316,10 +322,10 @@ export default function Page() {
           <span className="text-sm">Active</span>
           <span className="w-3 h-3 rounded-full bg-green-500 animate-pulse"></span>
         </div>
-        <div className="bg-gradient-to-r from-yellow-400 to-orange-500 md:p-1.5  p-[1px] rounded-2xl group flex justify-center items-center gap-2 ease-in-out">
+        <div className="bg-gradient-to-r from-yellow-400 to-orange-500 md:p-1.5  p-[1px] rounded-2xl group flex justify-center items-center gap-2 ease-in-out cursor-pointer">
           <GiSecretBook className="md:text-xl text-md" />
           <p className="md:opacity-0 scale-0 md:group-hover:opacity-100 md:group-hover:scale-100 transition-all duration-300">
-            4
+            {retriveFiles.length}
           </p>
         </div>
 
@@ -336,6 +342,48 @@ export default function Page() {
         >
           <RiRefreshFill className="md:text-xl text-md group-hover:animate-spin" />
         </button>
+      </div>
+      <div className="w-full overflow-auto md:h-160 h-130 ">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-10 place-items-center justify-center p-2 md:mt-10">
+          {retriveFiles.map((value, index) => {
+            return (
+              <div
+                className="h-48 w-64 rounded-2xl bg-gradient-to-b from-slate-700 to-slate-900 p-5 flex flex-col items-center justify-between shadow-lg hover:scale-105 transition-transform duration-300 relative"
+                key={value.id}
+              >
+                <div className="text-center">
+                  <p className="text-white font-semibold text-lg mb-2">
+                    {value.name}
+                  </p>
+                  <div className="flex justify-center items-center gap-3">
+                    <MdAccessTimeFilled className="" />
+                    <p className="text-gray-300 text-sm">
+                      Expires in:{" "}
+                      {Math.max(
+                        0,
+                        Math.ceil(
+                          (new Date(value.expiry_date).getTime() -
+                            new Date().getTime()) /
+                            (1000 * 60 * 60 * 24)
+                        )
+                      )}{" "}
+                      days
+                    </p>
+                  </div>
+                </div>
+
+                <div className="flex justify-center items-center mt-3 bg-indigo-600 text-white font-medium py-2 px-5 rounded-lg hover:bg-indigo-500 transition-colors gap-2 group cursor-pointer">
+                  <p>Open</p>
+                  <SiChainguard className="group-hover:text-2xl transition-all ease-in-out " />
+                </div>
+
+                <div className=" absolute -right-1  bg-emerald-600 p-2 rounded-3xl -top-2">
+                  <FaFileShield />
+                </div>
+              </div>
+            );
+          })}
+        </div>
       </div>
     </div>
   );

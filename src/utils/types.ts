@@ -24,6 +24,13 @@ export interface loginDetails {
 export interface AddDetails {
   name: string;
   pin: string;
-  expiry_date: string; 
+  expiry_date: string;
   file_url: string;
+}
+
+export interface retriveDataDetails {
+  name: string;
+  expiry_date: string;
+  data_link: string;
+  id: string;
 }
