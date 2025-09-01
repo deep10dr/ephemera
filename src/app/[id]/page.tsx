@@ -167,7 +167,7 @@ export default function Page() {
   async function retriveData() {
     const { data, error } = await supabase
       .from("files")
-      .select("data_link,name,expiry_date,id")
+      .select("data_link,name,expiry_date,id,pin")
       .eq("user_id", id);
     if (error) {
       console.error("Error fetching data:", error);

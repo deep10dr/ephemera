@@ -33,4 +33,5 @@ export interface retriveDataDetails {
   expiry_date: string;
   data_link: string;
   id: string;
+  pin: string;
 }
