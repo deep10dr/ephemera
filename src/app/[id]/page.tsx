@@ -1,6 +1,6 @@
 "use client";
 import supabase from "@/utils/client";
-import { useParams } from "next/navigation";
+import { useParams, useRouter, usePathname } from "next/navigation";
 import NavBar from "@/components/navbar";
 import { useEffect, useState } from "react";
 import Greeting from "@/components/Greeting";
@@ -15,15 +15,19 @@ import { encryptLink } from "@/utils/crypto";
 import { MdAccessTimeFilled } from "react-icons/md";
 import { FaFileShield } from "react-icons/fa6";
 import { SiChainguard } from "react-icons/si";
+import { useFileData } from "@/context/FileDataContext";
 
 export default function Page() {
   const params = useParams();
+  const link = usePathname().toString();
   const id = params?.id?.toString();
   const [name, setName] = useState<string>("");
   const [visited, setVisited] = useState(false);
   const [add, setAdd] = useState(false);
   const [showPin, setShowPin] = useState(false);
   const [file, setFile] = useState<File | undefined>();
+  const router = useRouter();
+  const { setFileData } = useFileData();
   const [fileInfo, setFileInfo] = useState<AddDetails>({
     name: "",
     pin: "",
@@ -350,6 +354,17 @@ export default function Page() {
               <div
                 className="h-48 w-64 rounded-2xl bg-gradient-to-b from-slate-700 to-slate-900 p-5 flex flex-col items-center justify-between shadow-lg hover:scale-105 transition-transform duration-300 relative"
                 key={value.id}
+                onClick={() => {
+                  setFileData({
+                    name: value.name,
+                    expiry_date: value.expiry_date,
+                    pin: value.pin,
+                    data_link: value.data_link,
+                    id: value.id,
+                  });
+                  const newlink = link + "/file";
+                  router.push(newlink);
+                }}
               >
                 <div className="text-center">
                   <p className="text-white font-semibold text-lg mb-2">
