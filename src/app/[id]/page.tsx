@@ -15,6 +15,7 @@ import { encryptLink } from "@/utils/crypto";
 import { MdAccessTimeFilled } from "react-icons/md";
 import { FaFileShield } from "react-icons/fa6";
 import { SiChainguard } from "react-icons/si";
+import { FaCopy } from "react-icons/fa";
 import { useFileData } from "@/context/FileDataContext";
 
 export default function Page() {
@@ -62,6 +63,7 @@ export default function Page() {
 
       return () => clearTimeout(timer);
     }
+
     retriveData();
   }, []);
 
@@ -182,6 +184,124 @@ export default function Page() {
 
   return (
     <div className="w-full min-h-screen p-0 m-0 relative bg-[#0F172A] text-white">
+      {add && (
+        <div className=" absolute w-full h-full bg-black/60 z-9999 top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 flex justify-center items-center">
+          <div
+            className=" text-white
+    md:px-3 md:py-3 p-2 bg-[#1E293B]/90 backdrop-blur-md shadow-2xl rounded-2xl z-101 flex flex-col gap-4 md:w-80 w-70"
+          >
+            {/* Close Button */}
+            <button
+              onClick={() => setAdd(false)}
+              className="absolute top-3 right-3 p-1 bg-gradient-to-r from-red-500 to-pink-500 
+       rounded-full shadow-md cursor-pointer"
+            >
+              <IoMdCloseCircle className="text-sm text-white" />
+            </button>
+
+            {/* Title */}
+            <h2 className="text-lg font-semibold text-white text-center">
+              Add new File to secure
+            </h2>
+
+            {/* Name Input */}
+            <div
+              className="flex items-center gap-2 bg-[#0F172A] hover:bg-[#1a2237] 
+      focus-within:ring-2 focus-within:ring-blue-500 transition p-3 rounded-xl"
+            >
+              <input
+                type="text"
+                placeholder="Enter file name"
+                className="bg-transparent outline-none flex-1 text-sm placeholder-gray-500"
+                name="name"
+                value={fileInfo.name}
+                onChange={handleChange}
+              />
+            </div>
+
+            {/* PIN with toggle */}
+            <div
+              className="flex items-center gap-2 bg-[#0F172A] hover:bg-[#1a2237] 
+      focus-within:ring-2 focus-within:ring-blue-500 transition p-3 rounded-xl"
+            >
+              <input
+                type={showPin ? "text" : "password"}
+                placeholder="Enter PIN"
+                className="bg-transparent outline-none flex-1 text-sm placeholder-gray-500"
+                name="pin"
+                value={fileInfo.pin}
+                onChange={handleChange}
+              />
+              <button
+                type="button"
+                onClick={() => setShowPin(!showPin)}
+                className="text-gray-400 hover:text-white"
+              >
+                {showPin ? (
+                  <IoMdEyeOff className="cursor-pointer" />
+                ) : (
+                  <IoMdEye className="cursor-pointer" />
+                )}
+              </button>
+            </div>
+
+            {/* Expiry Date */}
+            <div className="flex gap-1 flex-col">
+              {" "}
+              <div
+                className="flex items-center gap-2 bg-[#0F172A] hover:bg-[#1a2237] 
+      focus-within:ring-2 focus-within:ring-blue-500 transition p-3 rounded-xl"
+              >
+                <input
+                  type="date"
+                  className="bg-transparent outline-none flex-1 text-sm placeholder-gray-500"
+                  placeholder="expiray date"
+                  name="expiry_date"
+                  value={fileInfo.expiry_date}
+                  onChange={handleChange}
+                  min={today}
+                />
+              </div>
+              <p className="text-xs text-gray-400 ms-2">Expiray Date</p>
+            </div>
+
+            {/* File Upload */}
+            <div className="flex flex-col gap-2">
+              <div
+                className="flex items-center gap-2 bg-[#0F172A] hover:bg-[#1a2237] 
+        focus-within:ring-2 focus-within:ring-blue-500 transition p-3 rounded-xl"
+              >
+                <input
+                  type="file"
+                  accept=".pdf,.doc,.docx"
+                  className="bg-transparent outline-none flex-1 text-sm 
+          file:mr-3 file:py-1 file:px-3 file:rounded-md file:border-0 
+          file:bg-blue-500 file:text-white hover:file:bg-blue-600 cursor-pointer"
+                  onChange={(e) => {
+                    const data = e?.target?.files?.[0];
+                    setFile(data ?? undefined);
+                  }}
+                />
+              </div>
+              <p className="text-xs text-gray-400">
+                Upload file should be in the format of .pdf, .doc or .docx
+              </p>
+            </div>
+
+            {/* Submit Button */}
+            <div className="flex justify-center items-center">
+              <button
+                className="mt-2 w-max px-6 py-2 bg-gradient-to-r from-blue-500 to-indigo-500 
+       text-white rounded-lg shadow-md hover:scale-[1.02] 
+       transition-all duration-300 cursor-pointer"
+                onClick={handleSubmit}
+              >
+                Secure the file
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
       <NavBar />
 
       <AnimatePresence>
@@ -200,118 +320,6 @@ export default function Page() {
           </motion.div>
         )}
       </AnimatePresence>
-      {add && (
-        <div
-          className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-white
-    md:px-3 md:py-3 p-2 bg-[#1E293B]/90 backdrop-blur-md shadow-2xl rounded-2xl z-101 flex flex-col gap-4 md:w-80 w-70"
-        >
-          {/* Close Button */}
-          <button
-            onClick={() => setAdd(false)}
-            className="absolute top-3 right-3 p-1 bg-gradient-to-r from-red-500 to-pink-500 
-       rounded-full shadow-md cursor-pointer"
-          >
-            <IoMdCloseCircle className="text-sm text-white" />
-          </button>
-
-          {/* Title */}
-          <h2 className="text-lg font-semibold text-white text-center">
-            Add new File to secure
-          </h2>
-
-          {/* Name Input */}
-          <div
-            className="flex items-center gap-2 bg-[#0F172A] hover:bg-[#1a2237] 
-      focus-within:ring-2 focus-within:ring-blue-500 transition p-3 rounded-xl"
-          >
-            <input
-              type="text"
-              placeholder="Enter file name"
-              className="bg-transparent outline-none flex-1 text-sm placeholder-gray-500"
-              name="name"
-              value={fileInfo.name}
-              onChange={handleChange}
-            />
-          </div>
-
-          {/* PIN with toggle */}
-          <div
-            className="flex items-center gap-2 bg-[#0F172A] hover:bg-[#1a2237] 
-      focus-within:ring-2 focus-within:ring-blue-500 transition p-3 rounded-xl"
-          >
-            <input
-              type={showPin ? "text" : "password"}
-              placeholder="Enter PIN"
-              className="bg-transparent outline-none flex-1 text-sm placeholder-gray-500"
-              name="pin"
-              value={fileInfo.pin}
-              onChange={handleChange}
-            />
-            <button
-              type="button"
-              onClick={() => setShowPin(!showPin)}
-              className="text-gray-400 hover:text-white"
-            >
-              {showPin ? <IoMdEyeOff /> : <IoMdEye />}
-            </button>
-          </div>
-
-          {/* Expiry Date */}
-          <div className="flex gap-1 flex-col">
-            {" "}
-            <div
-              className="flex items-center gap-2 bg-[#0F172A] hover:bg-[#1a2237] 
-      focus-within:ring-2 focus-within:ring-blue-500 transition p-3 rounded-xl"
-            >
-              <input
-                type="date"
-                className="bg-transparent outline-none flex-1 text-sm placeholder-gray-500"
-                placeholder="expiray date"
-                name="expiry_date"
-                value={fileInfo.expiry_date}
-                onChange={handleChange}
-                min={today}
-              />
-            </div>
-            <p className="text-xs text-gray-400 ms-2">Expiray Date</p>
-          </div>
-
-          {/* File Upload */}
-          <div className="flex flex-col gap-2">
-            <div
-              className="flex items-center gap-2 bg-[#0F172A] hover:bg-[#1a2237] 
-        focus-within:ring-2 focus-within:ring-blue-500 transition p-3 rounded-xl"
-            >
-              <input
-                type="file"
-                accept=".pdf,.doc,.docx"
-                className="bg-transparent outline-none flex-1 text-sm 
-          file:mr-3 file:py-1 file:px-3 file:rounded-md file:border-0 
-          file:bg-blue-500 file:text-white hover:file:bg-blue-600 cursor-pointer"
-                onChange={(e) => {
-                  const data = e?.target?.files?.[0];
-                  setFile(data ?? undefined);
-                }}
-              />
-            </div>
-            <p className="text-xs text-gray-400">
-              Upload file should be in the format of .pdf, .doc or .docx
-            </p>
-          </div>
-
-          {/* Submit Button */}
-          <div className="flex justify-center items-center">
-            <button
-              className="mt-2 w-max px-6 py-2 bg-gradient-to-r from-blue-500 to-indigo-500 
-       text-white rounded-lg shadow-md hover:scale-[1.02] 
-       transition-all duration-300"
-              onClick={handleSubmit}
-            >
-              Secure the file
-            </button>
-          </div>
-        </div>
-      )}
 
       {visited && (
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
