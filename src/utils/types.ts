@@ -35,3 +35,7 @@ export interface retriveDataDetails {
   id: string;
   pin: string;
 }
+
+export interface visitedDataType {
+  visit: boolean;
+}

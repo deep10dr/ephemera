@@ -1,5 +1,5 @@
 "use client";
-import { retriveDataDetails, errorDetails } from "@/utils/types";
+import { errorDetails } from "@/utils/types";
 import {
   InputOTP,
   InputOTPGroup,
@@ -67,7 +67,14 @@ export default function Page() {
 
       {!unlocked && (
         <div className="absolute left-1/2 top-1/2 -translate-1/2 w-max rounded-2xl h-max flex justify-center items-center bg-[#1E293B] p-6 flex-col gap-5">
-          <p className="text-white">Enter the pin to view the file</p>
+          <div className="text-center">
+            <h2 className="text-2xl font-semibold text-white tracking-tight">
+              Secure Access
+            </h2>
+            <p className="text-gray-300 text-sm mt-2">
+              Enter the 6-digit PIN to view your file
+            </p>
+          </div>
 
           <InputOTP maxLength={6} value={pin} onChange={setPin}>
             <InputOTPGroup>

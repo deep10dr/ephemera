@@ -9,7 +9,12 @@ import { RiRefreshFill } from "react-icons/ri";
 import { getUserWithExpiry } from "@/utils/storage";
 import { GiSecretBook } from "react-icons/gi";
 import { IoMdCloseCircle } from "react-icons/io";
-import { AddDetails, errorDetails, retriveDataDetails } from "@/utils/types";
+import {
+  AddDetails,
+  errorDetails,
+  retriveDataDetails,
+  visitedDataType,
+} from "@/utils/types";
 import { AnimatePresence, motion } from "framer-motion";
 import { encryptLink } from "@/utils/crypto";
 import { MdAccessTimeFilled } from "react-icons/md";
@@ -52,16 +57,15 @@ export default function Page() {
     if (user?.name) {
       setName(user.name);
     }
-
+    
     const data = visitedStr ? JSON.parse(visitedStr) : null;
 
-    if (!data || data.visit === false) {
+    if (data?.visit === false) {
       setVisited(true);
-
       sessionStorage.setItem("visited", JSON.stringify({ visit: true }));
-      const timer = setTimeout(() => setVisited(false), 8000);
+      setTimeout(() => setVisited(false), 8000);
 
-      return () => clearTimeout(timer);
+
     }
 
     retriveData();
@@ -291,7 +295,7 @@ export default function Page() {
             {/* Submit Button */}
             <div className="flex justify-center items-center">
               <button
-                className="mt-2 w-max px-6 py-2 bg-gradient-to-r from-blue-500 to-indigo-500 
+                className="mt-2 w-max px-4 py-2 bg-gradient-to-r from-blue-500 to-indigo-500 
        text-white rounded-lg shadow-md hover:scale-[1.02] 
        transition-all duration-300 cursor-pointer"
                 onClick={handleSubmit}
@@ -357,22 +361,11 @@ export default function Page() {
       </div>
       <div className="w-full overflow-auto md:h-160 h-130 ">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-10 place-items-center justify-center p-2 md:mt-10">
-          {retriveFiles.map((value, index) => {
+          {retriveFiles.map((value) => {
             return (
               <div
                 className="h-48 w-64 rounded-2xl bg-gradient-to-b from-slate-700 to-slate-900 p-5 flex flex-col items-center justify-between shadow-lg hover:scale-105 transition-transform duration-300 relative"
                 key={value.id}
-                onClick={() => {
-                  setFileData({
-                    name: value.name,
-                    expiry_date: value.expiry_date,
-                    pin: value.pin,
-                    data_link: value.data_link,
-                    id: value.id,
-                  });
-                  const newlink = link + "/file";
-                  router.push(newlink);
-                }}
               >
                 <div className="text-center">
                   <p className="text-white font-semibold text-lg mb-2">
@@ -395,7 +388,20 @@ export default function Page() {
                   </div>
                 </div>
 
-                <div className="flex justify-center items-center mt-3 bg-indigo-600 text-white font-medium py-2 px-5 rounded-lg hover:bg-indigo-500 transition-colors gap-2 group cursor-pointer">
+                <div
+                  className="flex justify-center items-center mt-3 bg-indigo-600 text-white font-medium py-2 px-5 rounded-lg hover:bg-indigo-500 transition-colors gap-2 group cursor-pointer"
+                  onClick={() => {
+                    setFileData({
+                      name: value.name,
+                      expiry_date: value.expiry_date,
+                      pin: value.pin,
+                      data_link: value.data_link,
+                      id: value.id,
+                    });
+                    const newlink = link + "/file";
+                    router.push(newlink);
+                  }}
+                >
                   <p>Open</p>
                   <SiChainguard className="group-hover:text-2xl transition-all ease-in-out " />
                 </div>
@@ -406,6 +412,12 @@ export default function Page() {
               </div>
             );
           })}
+          <div className="h-48 w-64 rounded-2xl bg-gradient-to-b from-slate-700 to-slate-900 p-5 flex flex-col items-center justify-between shadow-lg hover:scale-105 transition-transform duration-300 relative">
+            <div className=" absolute -right-1  bg-emerald-600 p-2 rounded-3xl -top-2">
+              <FaFileShield />
+            </div>
+            <p>Paste your shared link to open the file</p>
+          </div>
         </div>
       </div>
     </div>
