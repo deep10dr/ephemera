@@ -18,11 +18,24 @@ export default function NavBar() {
         Ephemera
       </h1>
       {show && (
-        <div className=" absolute w-40 h-50 bg-white/80 md:right-29 right-25 top-9  text-[#1E293B]/90 z-9999 rounded-b-3xl rounded-l-3xl flex justify-center ">
-          <div className="flex justify-center items-center w-max h-max gap-4 mt-1">
-            <h2 className="font-bold">Notification</h2>
-            <IoMdSettings className="w-4 h-4 " />
+        <div
+          className="absolute animate-shake  md:w-60 w-55 max-h-[400px] bg-white/90 backdrop-blur-md shadow-xl border border-slate-200 md:right-28 right-22 top-12 
+                text-slate-800 z-[9999] rounded-2xl flex flex-col gap-3 p-4"
+        >
+          <div className="flex justify-between items-center border-b border-slate-200 pb-2">
+            <h2 className="font-semibold text-slate-700">Notifications</h2>
+            <IoMdSettings className="w-5 h-5 cursor-pointer hover:text-slate-600 transition" />
           </div>
+
+          <div className="flex flex-col gap-2 overflow-y-auto max-h-60">
+            <div className="w-full h-12 bg-slate-100 rounded-xl animate-pulse"></div>
+            <div className="w-full h-12 bg-slate-100 rounded-xl animate-pulse"></div>
+            <div className="w-full h-12 bg-slate-100 rounded-xl animate-pulse"></div>
+          </div>
+
+          <p className="cursor-pointer text-sm text-blue-600 font-medium text-center hover:underline mt-2">
+            Show all
+          </p>
         </div>
       )}
 
