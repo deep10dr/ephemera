@@ -9,8 +9,8 @@ import { useRouter } from "next/navigation";
 const Lottie = dynamic(() => import("lottie-react"), { ssr: false });
 import { getUserWithExpiry } from "@/utils/storage";
 // Import JSON only once
-import source from "../animations/secure.json";
-import source1 from "../animations/secure1.json";
+import source1 from "../animations/secure.json";
+import source from "../animations/secure1.json";
 import source2 from "../animations/secure2.json";
 
 export default function Page() {

@@ -22,17 +22,18 @@ import { FaFileShield } from "react-icons/fa6";
 import { SiChainguard } from "react-icons/si";
 import { FaCopy } from "react-icons/fa";
 import { useFileData } from "@/context/FileDataContext";
+import { RiDeleteBin6Fill } from "react-icons/ri";
 
 export default function Page() {
   const params = useParams();
   const link = usePathname().toString();
   const id = params?.id?.toString();
+  const router = useRouter();
   const [name, setName] = useState<string>("");
   const [visited, setVisited] = useState(false);
   const [add, setAdd] = useState(false);
   const [showPin, setShowPin] = useState(false);
   const [file, setFile] = useState<File | undefined>();
-  const router = useRouter();
   const { setFileData } = useFileData();
   const [fileInfo, setFileInfo] = useState<AddDetails>({
     name: "",
@@ -40,6 +41,7 @@ export default function Page() {
     expiry_date: "",
     file_url: "",
   });
+  const [deletefile, setDelete] = useState(false);
   const [retriveFiles, setRetriveFiles] = useState<Array<retriveDataDetails>>(
     []
   );
@@ -57,15 +59,13 @@ export default function Page() {
     if (user?.name) {
       setName(user.name);
     }
-    
+
     const data = visitedStr ? JSON.parse(visitedStr) : null;
 
     if (data?.visit === false) {
       setVisited(true);
       sessionStorage.setItem("visited", JSON.stringify({ visit: true }));
       setTimeout(() => setVisited(false), 8000);
-
-
     }
 
     retriveData();
@@ -170,6 +170,9 @@ export default function Page() {
         console.error("Unexpected error:", error);
         showMessage("Unexpected error occurred", true);
       } finally {
+        setFileInfo({ name: "", pin: "", expiry_date: "", file_url: "" });
+        setFile(undefined);
+        setAdd(false);
         retriveData();
       }
     }
@@ -325,9 +328,15 @@ export default function Page() {
         )}
       </AnimatePresence>
 
-      {visited && (
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
-          <Greeting />
+      {(visited || deletefile) && (
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full min-h-screen z-9999 bg-black/30 flex justify-center items-center">
+          {visited ? (
+            <Greeting />
+          ) : (
+            <div>
+              <p>Are you sure to delete file?</p>
+            </div>
+          )}
         </div>
       )}
 
@@ -364,7 +373,7 @@ export default function Page() {
           {retriveFiles.map((value) => {
             return (
               <div
-                className="h-48 w-64 rounded-2xl bg-gradient-to-b from-slate-700 to-slate-900 p-5 flex flex-col items-center justify-between shadow-lg hover:scale-105 transition-transform duration-300 relative"
+                className="h-48 w-64 rounded-2xl bg-gradient-to-b from-slate-700 to-slate-900 p-5 flex flex-col items-center justify-between shadow-lg hover:scale-105 transition-transform duration-300 relative z-10"
                 key={value.id}
               >
                 <div className="text-center">
@@ -387,7 +396,12 @@ export default function Page() {
                     </p>
                   </div>
                 </div>
-
+                <div className="flex justify-center gap-2 items-center">
+                  <RiDeleteBin6Fill
+                    className="text-red-300 text-2xl "
+                    onClick={() => setDelete((prev) => !prev)}
+                  />
+                </div>
                 <div
                   className="flex justify-center items-center mt-3 bg-indigo-600 text-white font-medium py-2 px-5 rounded-lg hover:bg-indigo-500 transition-colors gap-2 group cursor-pointer"
                   onClick={() => {
