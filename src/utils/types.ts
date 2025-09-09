@@ -39,3 +39,9 @@ export interface retriveDataDetails {
 export interface visitedDataType {
   visit: boolean;
 }
+export interface deleteFileInfo {
+  deleteFileName: string;
+  operation: boolean;
+  pin: string;
+  gifAlert: boolean;
+}

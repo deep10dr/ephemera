@@ -13,16 +13,18 @@ import {
   AddDetails,
   errorDetails,
   retriveDataDetails,
-  visitedDataType,
+  deleteFileInfo,
 } from "@/utils/types";
 import { AnimatePresence, motion } from "framer-motion";
 import { encryptLink } from "@/utils/crypto";
 import { MdAccessTimeFilled } from "react-icons/md";
 import { FaFileShield } from "react-icons/fa6";
 import { SiChainguard } from "react-icons/si";
-import { FaCopy } from "react-icons/fa";
 import { useFileData } from "@/context/FileDataContext";
 import { RiDeleteBin6Fill } from "react-icons/ri";
+import TrashAnimation from "@/animations/Trash.json";
+import dynamic from "next/dynamic";
+const Lottie = dynamic(() => import("lottie-react"), { ssr: false });
 
 export default function Page() {
   const params = useParams();
@@ -41,7 +43,12 @@ export default function Page() {
     expiry_date: "",
     file_url: "",
   });
-  const [deletefile, setDelete] = useState(false);
+  const [deletefile, setDelete] = useState<deleteFileInfo>({
+    operation: false,
+    deleteFileName: "",
+    pin: "",
+    gifAlert: false,
+  });
   const [retriveFiles, setRetriveFiles] = useState<Array<retriveDataDetails>>(
     []
   );
@@ -188,6 +195,24 @@ export default function Page() {
       setRetriveFiles(data);
     }
   }
+  async function deleteFile() {
+    setDelete((prev) => ({ ...prev, operation: false, gifAlert: true }));
+    const { data, error } = await supabase
+      .from("files")
+      .delete()
+      .eq("id", deletefile.deleteFileName)
+      .single();
+
+    if (error) {
+      showMessage("Error Occuring while deleting the file", true);
+      retriveData();
+    } else {
+      setTimeout(() => {
+        setDelete((prev) => ({ ...prev, gifAlert: false }));
+      }, 1300);
+      retriveData();
+    }
+  }
 
   return (
     <div className="w-full min-h-screen p-0 m-0 relative bg-[#0F172A] text-white">
@@ -328,13 +353,52 @@ export default function Page() {
         )}
       </AnimatePresence>
 
-      {(visited || deletefile) && (
+      {(visited || deletefile.operation || deletefile.gifAlert) && (
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full min-h-screen z-9999 bg-black/30 flex justify-center items-center">
           {visited ? (
             <Greeting />
           ) : (
-            <div>
-              <p>Are you sure to delete file?</p>
+            <div className="md:w-70 w-70 h-max bg-[#0F172A] shadow-2xl flex flex-col justify-between items-center rounded-2xl p-6 text-white">
+              {deletefile.operation ? (
+                <>
+                  {" "}
+                  <p className="text-lg font-semibold text-center">
+                    Are you sure you want to delete this file?
+                  </p>
+                  <div className="flex gap-4 mt-6">
+                    <button
+                      className="bg-red-400 hover:bg-red-500 text-white px-4 py-2 rounded-lg shadow-md transition cursor-pointer"
+                      onClick={() =>
+                        setDelete({
+                          operation: false,
+                          deleteFileName: "",
+                          pin: "",
+                          gifAlert: false,
+                        })
+                      }
+                    >
+                      No
+                    </button>
+                    <button
+                      className="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-lg shadow-md transition cursor-pointer"
+                      onClick={deleteFile}
+                    >
+                      Yes, I’m sure
+                    </button>
+                  </div>
+                </>
+              ) : (
+                <>
+                  <Lottie
+                    animationData={TrashAnimation}
+                    loop={true}
+                    className="w-40 h-40"
+                  />
+                  <h2 className="text-xl font-semibold text-green-600 text-center">
+                    File Deleted Successfully
+                  </h2>
+                </>
+              )}
             </div>
           )}
         </div>
@@ -398,8 +462,15 @@ export default function Page() {
                 </div>
                 <div className="flex justify-center gap-2 items-center">
                   <RiDeleteBin6Fill
-                    className="text-red-300 text-2xl "
-                    onClick={() => setDelete((prev) => !prev)}
+                    className="text-red-300 text-2xl cursor-pointer "
+                    onClick={() =>
+                      setDelete({
+                        operation: true,
+                        deleteFileName: value.id,
+                        pin: value.id,
+                        gifAlert: false,
+                      })
+                    }
                   />
                 </div>
                 <div
@@ -426,12 +497,6 @@ export default function Page() {
               </div>
             );
           })}
-          <div className="h-48 w-64 rounded-2xl bg-gradient-to-b from-slate-700 to-slate-900 p-5 flex flex-col items-center justify-between shadow-lg hover:scale-105 transition-transform duration-300 relative">
-            <div className=" absolute -right-1  bg-emerald-600 p-2 rounded-3xl -top-2">
-              <FaFileShield />
-            </div>
-            <p>Paste your shared link to open the file</p>
-          </div>
         </div>
       </div>
     </div>
