@@ -12,6 +12,7 @@ import { FaTelegram } from "react-icons/fa";
 import { IoLogoWhatsapp } from "react-icons/io";
 import { removeItem } from "@/utils/storage";
 import { user } from "@/utils/types";
+import supabase from "@/utils/client";
 
 export default function Page() {
   const router = useRouter();
@@ -20,6 +21,12 @@ export default function Page() {
     const data = getUserWithExpiry("user");
     setUserData(data);
   }, []);
+  async function HandlogOut() {
+    const { error } = await supabase.auth.signOut();
+    if (error) {
+      console.log(error);
+    }
+  }
 
   return (
     <div className="w-full min-h-screen flex justify-center items-center bg-[#0F172A] p-2">
@@ -46,8 +53,6 @@ export default function Page() {
                 <p className="text-gray-400 capitalize">{userData.provider}</p>
               </div>
             </div>
-
-            {/* Right: Logout */}
           </div>
 
           {/* Professional Info Section */}
@@ -81,6 +86,7 @@ export default function Page() {
               className="flex w-max items-center gap-2 text-sm px-4 py-2 hover:text-red-500 cursor-pointer  rounded-lg shadow-md transition"
               onClick={() => {
                 removeItem("user");
+                HandlogOut();
                 setUserData(null);
               }}
             >

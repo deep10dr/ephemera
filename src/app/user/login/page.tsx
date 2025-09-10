@@ -10,6 +10,7 @@ import supabase from "@/utils/client";
 import Loading from "@/components/loading";
 import { setWithExpiry } from "@/utils/storage";
 import { errorDetails, loginDetails } from "@/utils/types";
+import ForgotPassword from "@/components/ForgotPassword";
 
 export default function Page() {
   const [userData, setUserData] = useState<loginDetails>({
@@ -17,7 +18,7 @@ export default function Page() {
     password: "",
   });
   const navigate = useRouter();
-
+  const [forgot, setForgot] = useState(false);
   const [visible, setVisible] = useState(false);
   const [message, setMessage] = useState<errorDetails>({
     error: false,
@@ -87,6 +88,11 @@ export default function Page() {
   return (
     <div className="flex justify-center items-center w-full min-h-screen p-3 relative ">
       {/* Error Popup */}
+      {forgot && (
+        <div className=" absolute w-full min-h-screen flex justify-center items-center bg-black/60 z-9999 ">
+          <ForgotPassword />
+        </div>
+      )}
       <AnimatePresence>
         {(message.error || message.sucess) && (
           <motion.div
@@ -144,10 +150,7 @@ export default function Page() {
         </div>
         <div className="w-full p-1">
           <p className="text-end text-xs focus:underline cursor-pointer text-red-300">
-            <span
-              className="underline"
-              onClick={() => navigate.replace("/user/password-reset")}
-            >
+            <span className="underline" onClick={() => setForgot(true)}>
               forgot password
             </span>{" "}
             ?

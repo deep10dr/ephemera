@@ -1,108 +1,81 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import supabase from "@/utils/client";
-import { MdOutlineEmail } from "react-icons/md";
-import { AnimatePresence, motion } from "framer-motion";
-import { usePathname } from "next/navigation";
+import { useRouter } from "next/navigation";
 
-export default function Page() {
-  const [email, setEmail] = useState("");
-  const [agree, setAgree] = useState(false);
+export default function UpdatePasswordPage() {
+  const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState<{
     type: "error" | "success";
     text: string;
   } | null>(null);
-  const [loading, setLoading] = useState(false);
-  const pathname = usePathname();
+  const router = useRouter();
 
   function showMessage(type: "error" | "success", text: string) {
     setMessage({ type, text });
     setTimeout(() => setMessage(null), 3000);
   }
 
-  async function handleSendLink() {
-    if (!email.match(/^[^\s@]+@[^\s@]+\.[^\s@]+$/)) {
-      showMessage("error", "Invalid email address");
-      return;
+  useEffect(() => {
+    async function handle() {
+      const { data, error } = await supabase.auth.getUser();
+      if (error) {
+        console.log("error");
+      } else {
+        console.log(data);
+      }
     }
-    if (!agree) {
-      showMessage("error", "Please confirm to continue");
+    handle();
+  }, []);
+  async function handleUpdatePassword() {
+    if (password.length < 6) {
+      showMessage("error", "Password must be at least 6 characters long");
       return;
     }
 
     setLoading(true);
-    const { error } = await supabase.auth.resetPasswordForEmail(email, {
-      redirectTo: pathname,
+    const { data, error } = await supabase.auth.updateUser({
+      password,
     });
     setLoading(false);
 
     if (error) {
       showMessage("error", error.message);
     } else {
-      showMessage("success", "Reset link sent! Check your email.");
-      setEmail("");
-      setAgree(false);
+      showMessage("success", "Password updated! Redirecting...");
+      setPassword("");
+      setTimeout(() => router.push("/login"), 1500); // Redirect to login page
     }
   }
 
   return (
-    <div className="w-full min-h-screen flex justify-center items-center relative">
-      {/* Floating message */}
-      <AnimatePresence>
+    <div className="w-full min-h-screen flex justify-center items-center">
+      <div className="bg-[#1E293B]/90 backdrop-blur-md text-white w-72 rounded-2xl p-4 space-y-3 shadow-lg">
+        <h2 className="text-center font-semibold">Set a New Password</h2>
+        <input
+          type="password"
+          placeholder="New password"
+          className="bg-[#0F172A] p-3 rounded-xl w-full outline-none text-sm"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+        />
+        <button
+          className="bg-sky-400 hover:bg-sky-500 px-3 py-2 rounded-xl font-medium w-full"
+          disabled={loading}
+          onClick={handleUpdatePassword}
+        >
+          {loading ? "Updating..." : "Update Password"}
+        </button>
         {message && (
-          <motion.div
-            key="message"
-            className={`${
-              message.type === "error" ? "bg-red-600" : "bg-green-500"
-            } text-white text-sm font-medium rounded-xl shadow-xl px-4 py-2 absolute top-10`}
-            initial={{ opacity: 0, y: 60 }}
-            animate={{ opacity: 1, y: 20 }}
-            exit={{ opacity: 0, y: -60 }}
-            transition={{ duration: 0.4 }}
+          <p
+            className={`text-center text-sm mt-2 ${
+              message.type === "error" ? "text-red-400" : "text-green-400"
+            }`}
           >
             {message.text}
-          </motion.div>
+          </p>
         )}
-      </AnimatePresence>
-
-      {/* Reset box */}
-      <div className="bg-[#1E293B]/90 backdrop-blur-md text-white w-72 rounded-2xl p-4 space-y-3 shadow-lg">
-        {/* Email input */}
-        <div className="flex items-center gap-2 bg-[#0F172A]   transition p-3 rounded-xl">
-          <MdOutlineEmail className="text-gray-400" />
-          <input
-            type="email"
-            placeholder="Enter your email"
-            className="bg-transparent outline-none flex-1 text-sm placeholder-gray-500"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-          />
-        </div>
-
-        {/* Agreement checkbox */}
-        <div className="flex items-center gap-2">
-          <input
-            type="checkbox"
-            checked={agree}
-            onChange={(e) => setAgree(e.target.checked)}
-          />
-          <p className="text-xs">I confirm I want to reset my password</p>
-        </div>
-
-        {/* Reset button */}
-        <div className="w-full flex justify-center items-center">
-          <button
-            className={`w-max px-3 py-2 rounded-xl font-medium transition ${
-              agree
-                ? "bg-sky-400 hover:bg-sky-500 cursor-pointer"
-                : "bg-gray-500 cursor-not-allowed"
-            }`}
-            disabled={!agree || loading}
-            onClick={handleSendLink}
-          >
-            {loading ? "Sending..." : "Send Reset Link"}
-          </button>
-        </div>
       </div>
     </div>
   );
