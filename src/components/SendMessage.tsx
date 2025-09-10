@@ -66,19 +66,23 @@ export default function SendMessage({
     }
   }
   async function handleSubmit() {
-    const { error } = await supabase.from("notifications").insert({
-      sender_id: sender_id,
-      receiver_id: receiver?.id,
-      body_id: message_id,
-      expiry_date: expiry_date,
-    });
-    if (error) {
-      console.log(error);
+    if (sender_id != receiver?.id) {
+      const { error } = await supabase.from("notifications").insert({
+        sender_id: sender_id,
+        receiver_id: receiver?.id,
+        body_id: message_id,
+        expiry_date: expiry_date,
+      });
+      if (error) {
+        console.log(error);
+      } else {
+        setSend(true);
+        setTimeout(() => setSend(false), 7500);
+        setReceiverData(null);
+        setSearchNumber("");
+      }
     } else {
-      setSend(true);
-      setTimeout(() => setSend(false), 7500);
-      setReceiverData(null);
-      setSearchNumber("");
+      console.log("same id");
     }
   }
 
@@ -175,7 +179,7 @@ export default function SendMessage({
               </p>
             </div>
             <button
-              className="py-2 px-3 cursor-pointer bg-sky-400 rounded-xl font-semibold w-max mt-2"
+              className="py-2 px-3 cursor-pointer bg-sky-400 rounded-xl font-semibold w-max mt-2 md:mt-5"
               disabled={!receiver?.confirm}
               onClick={handleSubmit}
             >

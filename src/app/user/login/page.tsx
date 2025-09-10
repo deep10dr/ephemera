@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { MdOutlineEmail } from "react-icons/md";
 import { AiOutlineEye, AiOutlineEyeInvisible } from "react-icons/ai";
 import { motion, AnimatePresence } from "framer-motion";
@@ -8,7 +8,7 @@ import { RiLockPasswordFill } from "react-icons/ri";
 import { useRouter } from "next/navigation";
 import supabase from "@/utils/client";
 import Loading from "@/components/loading";
-import { setWithExpiry, getWithExpiry } from "@/utils/storage";
+import { setWithExpiry } from "@/utils/storage";
 import { errorDetails, loginDetails } from "@/utils/types";
 
 export default function Page() {
@@ -73,7 +73,7 @@ export default function Page() {
           setTimeout(() => {
             setMessage({ sucess: false, message: "" });
           }, 1000);
-          sessionStorage.setItem("visited", JSON.stringify({visit:false}));
+          sessionStorage.setItem("visited", JSON.stringify({ visit: false }));
           navigate.replace("/");
         }
       } catch (error) {
@@ -124,7 +124,7 @@ export default function Page() {
         </div>
 
         {/* Password */}
-        <div className="flex items-center gap-2 bg-[#0F172A] hover:bg-[#1a2237] focus-within:ring-2 focus-within:ring-blue-500 transition p-3 rounded-xl mb-5">
+        <div className="flex items-center gap-2 bg-[#0F172A] hover:bg-[#1a2237] focus-within:ring-2 focus-within:ring-blue-500 transition p-3 rounded-xl ">
           <RiLockPasswordFill className="text-gray-400" />
           <input
             type={visible ? "text" : "password"}
@@ -142,9 +142,20 @@ export default function Page() {
             {visible ? <AiOutlineEye /> : <AiOutlineEyeInvisible />}
           </button>
         </div>
+        <div className="w-full p-1">
+          <p className="text-end text-xs focus:underline cursor-pointer text-red-300">
+            <span
+              className="underline"
+              onClick={() => navigate.replace("/user/password-reset")}
+            >
+              forgot password
+            </span>{" "}
+            ?
+          </p>
+        </div>
 
         {/* Submit */}
-        <div className="w-full flex justify-center items-center">
+        <div className="w-full flex justify-center items-center mt-5">
           <button
             onClick={handleSubmit}
             className="w-max px-5 py-3 rounded-xl bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 transition font-semibold text-sm shadow-md"
