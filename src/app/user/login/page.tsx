@@ -10,6 +10,7 @@ import supabase from "@/utils/client";
 import Loading from "@/components/loading";
 import { setWithExpiry } from "@/utils/storage";
 import { errorDetails, loginDetails } from "@/utils/types";
+import { MdCancel } from "react-icons/md";
 import ForgotPassword from "@/components/ForgotPassword";
 
 export default function Page() {
@@ -90,6 +91,10 @@ export default function Page() {
       {/* Error Popup */}
       {forgot && (
         <div className=" absolute w-full min-h-screen flex justify-center items-center bg-black/60 z-9999 ">
+          <MdCancel
+            className=" absolute right-2 top-2 cursor-pointer text-2xl hover:text-red-400"
+            onClick={() => setForgot(false)}
+          />
           <ForgotPassword />
         </div>
       )}
