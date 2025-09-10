@@ -9,11 +9,14 @@ import { RiRefreshFill } from "react-icons/ri";
 import { getUserWithExpiry } from "@/utils/storage";
 import { GiSecretBook } from "react-icons/gi";
 import { IoMdCloseCircle } from "react-icons/io";
+import { PiShareFat } from "react-icons/pi";
+import { MdCancel } from "react-icons/md";
 import {
   AddDetails,
   errorDetails,
   retriveDataDetails,
   deleteFileInfo,
+  fileShare,
 } from "@/utils/types";
 import { AnimatePresence, motion } from "framer-motion";
 import { encryptLink } from "@/utils/crypto";
@@ -24,12 +27,13 @@ import { useFileData } from "@/context/FileDataContext";
 import { RiDeleteBin6Fill } from "react-icons/ri";
 import TrashAnimation from "@/animations/Trash.json";
 import dynamic from "next/dynamic";
+import SendMessage from "@/components/SendMessage";
 const Lottie = dynamic(() => import("lottie-react"), { ssr: false });
 
 export default function Page() {
   const params = useParams();
   const link = usePathname().toString();
-  const id = params?.id?.toString();
+  const id = params?.id?.toString() as string;
   const router = useRouter();
   const [name, setName] = useState<string>("");
   const [visited, setVisited] = useState(false);
@@ -48,6 +52,12 @@ export default function Page() {
     deleteFileName: "",
     pin: "",
     gifAlert: false,
+  });
+  const [shareFile, setShareFile] = useState<fileShare>({
+    share: false,
+    file_id: "",
+    file_name: "",
+    expiry_date: "",
   });
   const [retriveFiles, setRetriveFiles] = useState<Array<retriveDataDetails>>(
     []
@@ -197,7 +207,7 @@ export default function Page() {
   }
   async function deleteFile() {
     setDelete((prev) => ({ ...prev, operation: false, gifAlert: true }));
-    const { data, error } = await supabase
+    const { error } = await supabase
       .from("files")
       .delete()
       .eq("id", deletefile.deleteFileName)
@@ -216,6 +226,20 @@ export default function Page() {
 
   return (
     <div className="w-full min-h-screen p-0 m-0 relative bg-[#0F172A] text-white">
+      {shareFile.share && (
+        <div className="absolute w-full h-full bg-black/60 z-9997 top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 flex justify-center items-center">
+          <MdCancel
+            className=" absolute  top-2 right-2 text-2xl cursor-pointer hover:text-red-500"
+            onClick={() => setShareFile((prev) => ({ ...prev, share: false }))}
+          />
+          <SendMessage
+            message_id={shareFile.file_id}
+            sender_id={id}
+            message_name={shareFile.file_name}
+            expiry_date={shareFile.expiry_date}
+          />
+        </div>
+      )}
       {add && (
         <div className=" absolute w-full h-full bg-black/60 z-9999 top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 flex justify-center items-center">
           <div
@@ -469,6 +493,18 @@ export default function Page() {
                         deleteFileName: value.id,
                         pin: value.id,
                         gifAlert: false,
+                      })
+                    }
+                  />
+
+                  <PiShareFat
+                    className="text-2xl cursor-pointer hover:text-sky-600"
+                    onClick={() =>
+                      setShareFile({
+                        file_id: value.id,
+                        file_name: value.name,
+                        share: true,
+                        expiry_date: value.expiry_date,
                       })
                     }
                   />

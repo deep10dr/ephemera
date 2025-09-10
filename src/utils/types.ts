@@ -45,3 +45,10 @@ export interface deleteFileInfo {
   pin: string;
   gifAlert: boolean;
 }
+
+export interface fileShare {
+  file_id: string;
+  share: boolean;
+  file_name: string;
+  expiry_date:string
+}
