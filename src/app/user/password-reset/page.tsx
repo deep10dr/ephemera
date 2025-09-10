@@ -45,7 +45,7 @@ export default function UpdatePasswordPage() {
     } else {
       showMessage("success", "Password updated! Redirecting...");
       setPassword("");
-      setTimeout(() => router.push("/login"), 1500); // Redirect to login page
+      setTimeout(() => router.push("/user/login"), 1500); // Redirect to login page
     }
   }
 
