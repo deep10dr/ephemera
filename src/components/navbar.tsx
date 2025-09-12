@@ -24,21 +24,11 @@ export default function NavBar() {
 
   useEffect(() => {
     if (name) {
-      setInterval(() => {
-        async function Notify(name: userDetails) {
-          const responce = await retriveNotification(name?.user_id);
-          setNotifData(responce);
-        }
-        Notify(name);
-        //  function GetUserName(name: string) {
-        //   return retriveUserName(name);
-        // }
-        // if (notifData && notifData.data) {
-        //   notifData.data.map((value) => {
-                     
-        //   });
-        // }
-      }, 10000);
+      async function Notify(name: userDetails) {
+        const responce = await retriveNotification(name?.user_id);
+        setNotifData(responce);
+      }
+      Notify(name);
     }
   }, [name, notifData, show]);
 
@@ -74,7 +64,6 @@ export default function NavBar() {
                 })}
               </>
             )}
-            
           </div>
 
           <p className="cursor-pointer text-sm text-blue-600 font-medium text-center hover:underline mt-2">
