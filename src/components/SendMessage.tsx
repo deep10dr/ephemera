@@ -66,7 +66,8 @@ export default function SendMessage({
     }
   }
   async function handleSubmit() {
-    if (sender_id != receiver?.id) {
+    if (sender_id != receiver?.id && receiver) {
+     
       const { error } = await supabase.from("notifications").insert({
         sender_id: sender_id,
         receiver_id: receiver?.id,

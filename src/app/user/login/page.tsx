@@ -98,6 +98,11 @@ export default function Page() {
           <ForgotPassword />
         </div>
       )}
+      {loading && (
+        <div className=" absolute w-full min-h-screen z-8888  flex justify-center items-center  bg-black/60 ">
+          <Loading />
+        </div>
+      )}
       <AnimatePresence>
         {(message.error || message.sucess) && (
           <motion.div
@@ -114,7 +119,6 @@ export default function Page() {
           </motion.div>
         )}
       </AnimatePresence>
-      {loading && <Loading />}
 
       <div className="bg-[#1E293B]/90 backdrop-blur-md text-white w-[340px] rounded-2xl shadow-2xl p-4 ">
         <h1 className="font-bold text-2xl text-center mb-6 tracking-wide">
@@ -131,6 +135,7 @@ export default function Page() {
             name="email"
             value={userData.email}
             onChange={handleChange}
+            disabled={loading}
           />
         </div>
 
@@ -144,10 +149,12 @@ export default function Page() {
             name="password"
             value={userData.password}
             onChange={handleChange}
+            disabled={loading}
           />
           <button
             type="button"
             onClick={() => setVisible(!visible)}
+            disabled={loading}
             className="text-gray-400 hover:text-gray-200"
           >
             {visible ? <AiOutlineEye /> : <AiOutlineEyeInvisible />}
@@ -166,6 +173,7 @@ export default function Page() {
         <div className="w-full flex justify-center items-center mt-5">
           <button
             onClick={handleSubmit}
+            disabled={loading}
             className="w-max px-5 py-3 rounded-xl bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 transition font-semibold text-sm shadow-md"
           >
             Login

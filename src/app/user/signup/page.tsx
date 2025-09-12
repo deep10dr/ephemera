@@ -8,6 +8,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { RiLockPasswordFill, RiLockPasswordLine } from "react-icons/ri";
 import { useRouter } from "next/navigation";
 import supabase from "@/utils/client";
+import Loading from "@/components/loading";
 
 interface Details {
   name: string;
@@ -40,6 +41,7 @@ export default function Page() {
     success: false,
     message: "",
   });
+  const [loading, setLoading] = useState<boolean>(false);
 
   async function checkUser(email?: string, phone?: string): Promise<boolean> {
     let query = supabase
@@ -115,6 +117,7 @@ export default function Page() {
   async function handleSubmit() {
     if (await validate()) {
       try {
+        setLoading(true);
         const { email, password, name, phone } = userData;
 
         const { error } = await supabase.auth.signUp({
@@ -145,6 +148,8 @@ export default function Page() {
       } catch (error) {
         console.error(error);
         showError("Something went wrong. Please try again.");
+      } finally {
+        setLoading(false);
       }
     }
   }
@@ -168,6 +173,11 @@ export default function Page() {
           </motion.div>
         )}
       </AnimatePresence>
+      {loading && (
+        <div className=" absolute w-full min-h-screen z-8888  flex justify-center items-center  bg-black/60 ">
+          <Loading />
+        </div>
+      )}
 
       <div className="bg-[#1E293B]/90  backdrop-blur-md text-white w-[340px] rounded-2xl shadow-2xl p-6 ">
         <h1 className="font-bold text-2xl text-center mb-6 tracking-wide">
@@ -184,6 +194,7 @@ export default function Page() {
             name="name"
             value={userData.name}
             onChange={handleChange}
+            disabled={loading}
           />
         </div>
 
@@ -197,6 +208,7 @@ export default function Page() {
             name="email"
             value={userData.email}
             onChange={handleChange}
+            disabled={loading}
           />
         </div>
 
@@ -210,6 +222,7 @@ export default function Page() {
             name="phone"
             value={userData.phone}
             onChange={handleChange}
+            disabled={loading}
           />
         </div>
 
@@ -223,11 +236,13 @@ export default function Page() {
             name="password"
             value={userData.password}
             onChange={handleChange}
+            disabled={loading}
           />
           <button
             type="button"
             onClick={() => setVisible(!visible)}
             className="text-gray-400 hover:text-gray-200"
+            disabled={loading}
           >
             {visible ? <AiOutlineEye /> : <AiOutlineEyeInvisible />}
           </button>
@@ -243,6 +258,7 @@ export default function Page() {
             name="confirmPassword"
             value={userData.confirmPassword}
             onChange={handleChange}
+            disabled={loading}
           />
         </div>
 
@@ -250,6 +266,7 @@ export default function Page() {
         <div className="w-full flex justify-center items-center">
           <button
             onClick={handleSubmit}
+            disabled={loading}
             className="w-max px-5 py-3 rounded-xl bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 transition font-semibold text-sm shadow-md"
           >
             Sign Up
