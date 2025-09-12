@@ -6,7 +6,7 @@ import { IoIosNotifications } from "react-icons/io";
 import { IoMdSettings } from "react-icons/io";
 import { MdAccessTimeFilled } from "react-icons/md";
 import { MdCallReceived } from "react-icons/md";
-import { useFileData } from "@/context/FileDataContext";
+
 import {
   retriveNotification,
   retriveUserName,
@@ -29,7 +29,7 @@ export default function NavBar() {
   const [notifData, setNotifData] =
     useState<retriveNotificationInterface | null>();
   const router = useRouter();
-  const { setFileData } = useFileData();
+
   const date = new Date();
   const [username, setUserName] = useState([""]);
   useEffect(() => {
