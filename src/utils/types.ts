@@ -62,6 +62,7 @@ interface userNotification {
   body_id: string;
   sender_id: string;
   name?: string;
+  created_at: string;
 }
 interface userError {
   error: boolean;

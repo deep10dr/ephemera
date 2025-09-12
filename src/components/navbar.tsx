@@ -4,7 +4,12 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { IoIosNotifications } from "react-icons/io";
 import { IoMdSettings } from "react-icons/io";
-import { retriveNotification, retriveUserName } from "@/utils/retriveData";
+import {
+  retriveNotification,
+  retriveUserName,
+  TimeFormat,
+  DateFormat,
+} from "@/utils/retriveData";
 import { retriveNotificationInterface } from "@/utils/types";
 interface userDetails {
   name: string;
@@ -15,6 +20,8 @@ export default function NavBar() {
   const [show, setShow] = useState(false);
   const [notifData, setNotifData] = useState<retriveNotificationInterface>();
   const router = useRouter();
+  const date = new Date();
+  const [username, setUserName] = useState([""]);
   useEffect(() => {
     const user = getUserWithExpiry("user");
     if (user) {
@@ -23,14 +30,27 @@ export default function NavBar() {
   }, []);
 
   useEffect(() => {
-    if (name) {
-      async function Notify(name: userDetails) {
-        const responce = await retriveNotification(name?.user_id);
-        setNotifData(responce);
-      }
-      Notify(name);
+    if (!name || !show) return;
+
+    async function fetchNotifications() {
+      if (name)
+        try {
+          const response = await retriveNotification(name.user_id);
+          setNotifData(response);
+
+          if (response?.data) {
+            const senderNames = await Promise.all(
+              response.data.map((value) => retriveUserName(value.sender_id))
+            );
+            setUserName(senderNames);
+          }
+        } catch (error) {
+          console.error("Error fetching notifications:", error);
+        }
     }
-  }, [name, notifData, show]);
+
+    fetchNotifications();
+  }, [name, show]);
 
   return (
     <header className="flex justify-between items-center w-full px-6 py-4 shadow-md relative">
@@ -57,9 +77,19 @@ export default function NavBar() {
                 {notifData.data?.map((value, index) => {
                   return (
                     <div
-                      className="w-full h-12 bg-slate-100 rounded-xl animate-pulse"
+                      className="w-full h-12 bg-slate-100 rounded-xl flex flex-col"
                       key={index}
-                    ></div>
+                    >
+                      <p>{username[index]}</p>
+                      <div className="flex flex-row">
+                        <p className="text-xs">
+                          {TimeFormat(value?.created_at)}
+                        </p>
+                        <p className="text-xs ">
+                          {DateFormat(value?.created_at)}
+                        </p>
+                      </div>
+                    </div>
                   );
                 })}
               </>
