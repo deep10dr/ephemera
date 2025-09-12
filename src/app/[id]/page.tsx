@@ -145,7 +145,7 @@ export default function Page() {
             file.name.split(".")[1]
           }`;
 
-          const { data, error } = await supabase.storage
+          const { error } = await supabase.storage
             .from("file") // bucket name (make sure it's lowercase 'files')
             .upload(fileName, file, {
               upsert: false,
@@ -165,7 +165,7 @@ export default function Page() {
               fileInfo.pin
             );
             console.log(id);
-            const { data: inserData, error: insertError } = await supabase
+            const {  error: insertError } = await supabase
               .from("files")
               .insert({
                 user_id: id,
