@@ -87,7 +87,7 @@ export default function SendMessage({
   }
 
   return (
-    <div className="md:w-90 h-70 w-70 shadow-2xl rounded-2xl text-center bg-[#1E293B]/90">
+    <div className="md:w-90 h-max w-74 shadow-2xl rounded-2xl text-center bg-[#1E293B]/90 py-2">
       {send ? (
         <div className="w-full h-full flex justify-center items-center ">
           <Lottie animationData={message_send} loop />
@@ -165,7 +165,7 @@ export default function SendMessage({
               <span className="text-blue-400">{receiver.name}</span>
             </p>
           )}
-          <div className="w-full h-16 mt-7 justify-between flex flex-col items-center">
+          <div className="w-full  mt-7 justify-between flex flex-col items-center">
             <div className="flex md:gap-2 px-1 flex-row justify-items-start ">
               <input
                 type="checkbox"

@@ -50,5 +50,20 @@ export interface fileShare {
   file_id: string;
   share: boolean;
   file_name: string;
-  expiry_date:string
+  expiry_date: string;
+}
+
+export interface retriveNotificationInterface {
+  error: userError | null;
+  data: userNotification[] | null;
+}
+
+interface userNotification {
+  body_id: string;
+  sender_id: string;
+  name?: string;
+}
+interface userError {
+  error: boolean;
+  message: string;
 }

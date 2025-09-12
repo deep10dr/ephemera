@@ -4,14 +4,44 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { IoIosNotifications } from "react-icons/io";
 import { IoMdSettings } from "react-icons/io";
+import { retriveNotification, retriveUserName } from "@/utils/retriveData";
+import { retriveNotificationInterface } from "@/utils/types";
+interface userDetails {
+  name: string;
+  user_id: string;
+}
 export default function NavBar() {
-  const [name, setName] = useState<string | undefined>("");
+  const [name, setName] = useState<userDetails | null>(null);
   const [show, setShow] = useState(false);
+  const [notifData, setNotifData] = useState<retriveNotificationInterface>();
   const router = useRouter();
   useEffect(() => {
-    const data: string | undefined = getUserWithExpiry("user")?.name;
-    setName(data);
+    const user = getUserWithExpiry("user");
+    if (user) {
+      setName({ name: user.name, user_id: user.id });
+    }
   }, []);
+
+  useEffect(() => {
+    if (name) {
+      setInterval(() => {
+        async function Notify(name: userDetails) {
+          const responce = await retriveNotification(name?.user_id);
+          setNotifData(responce);
+        }
+        Notify(name);
+        //  function GetUserName(name: string) {
+        //   return retriveUserName(name);
+        // }
+        // if (notifData && notifData.data) {
+        //   notifData.data.map((value) => {
+                     
+        //   });
+        // }
+      }, 10000);
+    }
+  }, [name, notifData, show]);
+
   return (
     <header className="flex justify-between items-center w-full px-6 py-4 shadow-md relative">
       <h1 className="md:text-4xl text-3xl font-extrabold text-white tracking-wide">
@@ -28,9 +58,23 @@ export default function NavBar() {
           </div>
 
           <div className="flex flex-col gap-2 overflow-y-auto max-h-60">
-            <div className="w-full h-12 bg-slate-100 rounded-xl animate-pulse"></div>
-            <div className="w-full h-12 bg-slate-100 rounded-xl animate-pulse"></div>
-            <div className="w-full h-12 bg-slate-100 rounded-xl animate-pulse"></div>
+            {notifData == undefined ? (
+              <div>Empty</div>
+            ) : notifData.error?.error ? (
+              <div>Error</div>
+            ) : (
+              <>
+                {notifData.data?.map((value, index) => {
+                  return (
+                    <div
+                      className="w-full h-12 bg-slate-100 rounded-xl animate-pulse"
+                      key={index}
+                    ></div>
+                  );
+                })}
+              </>
+            )}
+            
           </div>
 
           <p className="cursor-pointer text-sm text-blue-600 font-medium text-center hover:underline mt-2">
@@ -46,7 +90,7 @@ export default function NavBar() {
         />
         <Image
           src={`https://ui-avatars.com/api/?name=${encodeURIComponent(
-            name ? name : "unkown"
+            name ? name.name : "unkown"
           )}&background=0D8ABC&color=fff&format=png`}
           width={30}
           height={30}
