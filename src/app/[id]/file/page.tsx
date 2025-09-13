@@ -6,7 +6,7 @@ import {
   InputOTPSeparator,
   InputOTPSlot,
 } from "@/components/ui/input-otp";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { useFileData } from "@/context/FileDataContext";
 import { decryptLink } from "@/utils/crypto";
@@ -41,6 +41,33 @@ export default function Page() {
       setUnlocked(true);
     }
   }
+  const [maskedPin, setMaskedPin] = useState("");
+  const [showLastDigit, setShowLastDigit] = useState(false);
+
+
+  useMemo(() => {
+    if (pin.length === 0) {
+      setMaskedPin("");
+      setShowLastDigit(false);
+      return;
+    }
+
+    setShowLastDigit(true);
+    const timer = setTimeout(() => {
+      setShowLastDigit(false);
+    }, 500);
+
+    return () => clearTimeout(timer);
+  }, [pin]);
+
+  const pinValue = useMemo(() => {
+    if (pin.length === 0) return "";
+    if (showLastDigit) {
+      return "*".repeat(pin.length - 1) + pin[pin.length - 1];
+    }
+    
+    return  "*".repeat(pin.length);
+  }, [pin, showLastDigit]);
 
   return (
     <div className="w-full min-h-screen flex justify-center items-center relative p-0 overflow-hidden">
@@ -76,7 +103,7 @@ export default function Page() {
             </p>
           </div>
 
-          <InputOTP maxLength={6} value={pin} onChange={setPin}>
+          <InputOTP maxLength={6} value={pinValue} onChange={setPin} required>
             <InputOTPGroup>
               <InputOTPSlot index={0} />
               <InputOTPSlot index={1} />

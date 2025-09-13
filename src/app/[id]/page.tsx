@@ -165,15 +165,14 @@ export default function Page() {
               fileInfo.pin
             );
             console.log(id);
-            const {  error: insertError } = await supabase
-              .from("files")
-              .insert({
-                user_id: id,
-                pin: fileInfo.pin,
-                name: fileInfo.name,
-                data_link: encrypted,
-                expiry_date: new Date(fileInfo.expiry_date).toISOString(),
-              });
+            const { error: insertError } = await supabase.from("files").insert({
+              user_id: id,
+              pin: fileInfo.pin,
+              name: fileInfo.name,
+              data_link: encrypted,
+              expiry_date: new Date(fileInfo.expiry_date).toISOString(),
+              file_location: fileName,
+            });
             if (insertError) {
               showMessage("Error Ocuur", true);
             } else {
