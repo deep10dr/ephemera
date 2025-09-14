@@ -202,6 +202,7 @@ export default function Page() {
       console.error("Error fetching data:", error);
     } else {
       setRetriveFiles(data);
+      
     }
   }
   async function deleteFile() {

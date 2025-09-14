@@ -1,21 +1,16 @@
 "use client";
 import { errorDetails } from "@/utils/types";
-import {
-  InputOTP,
-  InputOTPGroup,
-  InputOTPSeparator,
-  InputOTPSlot,
-} from "@/components/ui/input-otp";
+import React from "react";
 import { useMemo, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { useFileData } from "@/context/FileDataContext";
 import { decryptLink } from "@/utils/crypto";
-
+import OtpInput from "@/components/OtpInput";
 export default function Page() {
   const { fileData } = useFileData();
   const [unlocked, setUnlocked] = useState(false);
   const [fileLink, setFileLink] = useState("");
-  const [pin, setPin] = useState("");
+  const [pin, setPin] = React.useState("");
   const [message, setMessage] = useState<errorDetails>({
     message: "",
     error: false,
@@ -41,33 +36,6 @@ export default function Page() {
       setUnlocked(true);
     }
   }
-  const [maskedPin, setMaskedPin] = useState("");
-  const [showLastDigit, setShowLastDigit] = useState(false);
-
-
-  useMemo(() => {
-    if (pin.length === 0) {
-      setMaskedPin("");
-      setShowLastDigit(false);
-      return;
-    }
-
-    setShowLastDigit(true);
-    const timer = setTimeout(() => {
-      setShowLastDigit(false);
-    }, 500);
-
-    return () => clearTimeout(timer);
-  }, [pin]);
-
-  const pinValue = useMemo(() => {
-    if (pin.length === 0) return "";
-    if (showLastDigit) {
-      return "*".repeat(pin.length - 1) + pin[pin.length - 1];
-    }
-    
-    return  "*".repeat(pin.length);
-  }, [pin, showLastDigit]);
 
   return (
     <div className="w-full min-h-screen flex justify-center items-center relative p-0 overflow-hidden">
@@ -95,28 +63,14 @@ export default function Page() {
       {!unlocked && (
         <div className="absolute left-1/2 top-1/2 -translate-1/2 w-max rounded-2xl h-max flex justify-center items-center bg-[#1E293B] p-6 flex-col gap-5">
           <div className="text-center">
-            <h2 className="text-2xl font-semibold text-white tracking-tight">
+            <h2 className="text-2xl font-semibold text-whe tracking-tight">
               Secure Access
             </h2>
             <p className="text-gray-300 text-sm mt-2">
               Enter the 6-digit PIN to view your file
             </p>
           </div>
-
-          <InputOTP maxLength={6} value={pinValue} onChange={setPin} required>
-            <InputOTPGroup>
-              <InputOTPSlot index={0} />
-              <InputOTPSlot index={1} />
-              <InputOTPSlot index={2} />
-            </InputOTPGroup>
-            <InputOTPSeparator />
-            <InputOTPGroup>
-              <InputOTPSlot index={3} />
-              <InputOTPSlot index={4} />
-              <InputOTPSlot index={5} />
-            </InputOTPGroup>
-          </InputOTP>
-
+          <OtpInput length={6} value={pin} onChange={setPin} />
           <button
             onClick={handleUnlock}
             className="w-max px-4 py-2 bg-gradient-to-r from-blue-500 to-indigo-500 

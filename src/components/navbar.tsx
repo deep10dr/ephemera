@@ -117,7 +117,11 @@ export default function NavBar() {
             ) : (
               // Case 4: No notifications found
               <div className="flex justify-center items-center h-full flex-col">
-                <Lottie animationData={emprt_box_animation} className="h-20" />
+                <Lottie
+                  animationData={emprt_box_animation}
+                  className="h-20"
+                  loop={false}
+                />
                 <p className="text-sm text-gray-500">
                   No notifications available
                 </p>
