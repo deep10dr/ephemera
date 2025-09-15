@@ -1,11 +1,13 @@
-
-
 /** @type {import('tailwindcss').Config} */
-export const content = [
-  "./node_modules/@heroui/theme/dist/components/(input-otp|form).js",
-];
-export const theme = {
-  extend: {},
+module.exports = {
+  darkMode: "class",
+  content: [
+    "./pages/**/*.{js,ts,jsx,tsx,mdx}",
+    "./components/**/*.{js,ts,jsx,tsx,mdx}",
+    "./app/**/*.{js,ts,jsx,tsx,mdx}", // for Next.js App Router
+  ],
+  theme: {
+    extend: {},
+  },
+  plugins: [],
 };
-export const darkMode = "class";
-export const plugins = [heroui()];
