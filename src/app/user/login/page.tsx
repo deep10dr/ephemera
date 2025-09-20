@@ -135,7 +135,7 @@ export default function Page() {
             name="email"
             value={userData.email}
             onChange={handleChange}
-            disabled={loading}
+            disabled={loading  }
           />
         </div>
 

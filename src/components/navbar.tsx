@@ -16,8 +16,10 @@ import {
 import { retriveNotificationInterface } from "@/utils/types";
 import emprt_box_animation from "@/animations/empty_box_blue.json";
 import dynamic from "next/dynamic";
-import supabase from "@/utils/client";
+
 const Lottie = dynamic(() => import("lottie-react"), { ssr: false });
+
+
 interface userDetails {
   name: string;
   user_id: string;
