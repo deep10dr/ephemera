@@ -33,7 +33,6 @@ export default function NavBar() {
     useState<retriveNotificationInterface | null>();
   const router = useRouter();
   const { theme, setTheme } = useTheme();
-  const date = new Date();
   const [username, setUserName] = useState([""]);
   useEffect(() => {
     const user = getUserWithExpiry("user");
@@ -139,7 +138,7 @@ export default function NavBar() {
       )}
 
       <div
-        className={`relative md:w-35  h-10 rounded-full overflow-hidden bg-[#1E293B] flex justify-center items-center md:gap-4 gap-2 px-1 ${
+        className={`relative md:w-max  h-10 rounded-full overflow-hidden bg-[#1E293B] flex justify-center items-center md:gap-4 gap-2 px-1 ${
           theme ? "text-[#1E293B]  bg-[#e2e8f0] " : "text-white"
         } `}
       >
@@ -151,10 +150,12 @@ export default function NavBar() {
           )}
         </div>
 
-        <IoIosNotifications
-          className="h-5 w-5 hover:animate-shake cursor-pointer"
-          onClick={() => setShow((prev) => !prev)}
-        />
+        {name != null && (
+          <IoIosNotifications
+            className="h-5 w-5 hover:animate-shake cursor-pointer"
+            onClick={() => setShow((prev) => !prev)}
+          />
+        )}
         <Image
           src={`https://ui-avatars.com/api/?name=${encodeURIComponent(
             name ? name.name : "unkown"

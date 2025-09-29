@@ -26,8 +26,10 @@ import { SiChainguard } from "react-icons/si";
 import { useFileData } from "@/context/FileDataContext";
 import { RiDeleteBin6Fill } from "react-icons/ri";
 import TrashAnimation from "@/animations/Trash.json";
+import EmptyStateAni from "@/animations/Not_Found.json";
 import dynamic from "next/dynamic";
 import SendMessage from "@/components/SendMessage";
+import { useTheme } from "@/context/ThemeContext";
 const Lottie = dynamic(() => import("lottie-react"), { ssr: false });
 
 export default function Page() {
@@ -62,6 +64,7 @@ export default function Page() {
   const [retriveFiles, setRetriveFiles] = useState<Array<retriveDataDetails>>(
     []
   );
+  const { themeValue, theme } = useTheme();
   const today = new Date().toISOString().split("T")[0];
   const [message, setMessage] = useState<errorDetails>({
     message: "",
@@ -202,7 +205,6 @@ export default function Page() {
       console.error("Error fetching data:", error);
     } else {
       setRetriveFiles(data);
-      
     }
   }
   async function deleteFile() {
@@ -225,7 +227,7 @@ export default function Page() {
   }
 
   return (
-    <div className="w-full min-h-screen p-0 m-0 relative bg-[#0F172A] text-white">
+    <div className={`w-full min-h-screen p-0 m-0 relative ${themeValue} `}>
       {shareFile.share && (
         <div className="absolute w-full h-full bg-black/60 z-9997 top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 flex justify-center items-center">
           <MdCancel
@@ -428,7 +430,11 @@ export default function Page() {
         </div>
       )}
 
-      <div className="w-full p-3 flex gap-4 items-center">
+      <div
+        className={`w-full p-3 flex gap-4 items-center ${
+          theme ? "bg-[#e2e8f0]" : ""
+        } `}
+      >
         <p className="font-medium">{name}</p>
 
         <div className="flex items-center gap-2">
@@ -457,83 +463,93 @@ export default function Page() {
         </button>
       </div>
       <div className="w-full overflow-auto md:h-160 h-130 ">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-10 place-items-center justify-center p-2 md:mt-10">
-          {retriveFiles.map((value) => {
-            return (
-              <div
-                className="h-48 w-64 rounded-2xl bg-gradient-to-b from-slate-700 to-slate-900 p-5 flex flex-col items-center justify-between shadow-lg hover:scale-105 transition-transform duration-300 relative z-10"
-                key={value.id}
-              >
-                <div className="text-center">
-                  <p className="text-white font-semibold text-lg mb-2">
-                    {value.name}
-                  </p>
-                  <div className="flex justify-center items-center gap-3">
-                    <MdAccessTimeFilled className="" />
-                    <p className="text-gray-300 text-sm">
-                      Expires in:{" "}
-                      {Math.max(
-                        0,
-                        Math.ceil(
-                          (new Date(value.expiry_date).getTime() -
-                            new Date().getTime()) /
-                            (1000 * 60 * 60 * 24)
-                        )
-                      )}{" "}
-                      days
+        {retriveFiles.length > 0 ? (
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-10 place-items-center justify-center p-2 md:mt-10">
+            {retriveFiles.map((value) => {
+              return (
+                <div
+                  className="h-48 w-64 rounded-2xl bg-gradient-to-b from-slate-700 to-slate-900 p-5 flex flex-col items-center justify-between shadow-lg hover:scale-105 transition-transform duration-300 relative z-10"
+                  key={value.id}
+                >
+                  <div className="text-center">
+                    <p className="text-white font-semibold text-lg mb-2">
+                      {value.name}
                     </p>
+                    <div className="flex justify-center items-center gap-3">
+                      <MdAccessTimeFilled className="" />
+                      <p className="text-gray-300 text-sm">
+                        Expires in:{" "}
+                        {Math.max(
+                          0,
+                          Math.ceil(
+                            (new Date(value.expiry_date).getTime() -
+                              new Date().getTime()) /
+                              (1000 * 60 * 60 * 24)
+                          )
+                        )}{" "}
+                        days
+                      </p>
+                    </div>
+                  </div>
+                  <div className="flex justify-center gap-2 items-center">
+                    <RiDeleteBin6Fill
+                      className="text-red-300 text-2xl cursor-pointer "
+                      onClick={() =>
+                        setDelete({
+                          operation: true,
+                          deleteFileName: value.id,
+                          pin: value.id,
+                          gifAlert: false,
+                        })
+                      }
+                    />
+
+                    <PiShareFat
+                      className="text-2xl cursor-pointer hover:text-sky-600"
+                      onClick={() =>
+                        setShareFile({
+                          file_id: value.id,
+                          file_name: value.name,
+                          share: true,
+                          expiry_date: value.expiry_date,
+                        })
+                      }
+                    />
+                  </div>
+                  <div
+                    className="flex justify-center items-center mt-3 bg-indigo-600 text-white font-medium py-2 px-5 rounded-lg hover:bg-indigo-500 transition-colors gap-2 group cursor-pointer"
+                    onClick={() => {
+                      setFileData({
+                        name: value.name,
+                        expiry_date: value.expiry_date,
+                        pin: value.pin,
+                        data_link: value.data_link,
+                        id: value.id,
+                      });
+                      const newlink = link + "/file";
+                      router.push(newlink);
+                    }}
+                  >
+                    <p>Open</p>
+                    <SiChainguard className="group-hover:text-2xl transition-all ease-in-out " />
+                  </div>
+
+                  <div className=" absolute -right-1  bg-emerald-600 p-2 rounded-3xl -top-2">
+                    <FaFileShield />
                   </div>
                 </div>
-                <div className="flex justify-center gap-2 items-center">
-                  <RiDeleteBin6Fill
-                    className="text-red-300 text-2xl cursor-pointer "
-                    onClick={() =>
-                      setDelete({
-                        operation: true,
-                        deleteFileName: value.id,
-                        pin: value.id,
-                        gifAlert: false,
-                      })
-                    }
-                  />
-
-                  <PiShareFat
-                    className="text-2xl cursor-pointer hover:text-sky-600"
-                    onClick={() =>
-                      setShareFile({
-                        file_id: value.id,
-                        file_name: value.name,
-                        share: true,
-                        expiry_date: value.expiry_date,
-                      })
-                    }
-                  />
-                </div>
-                <div
-                  className="flex justify-center items-center mt-3 bg-indigo-600 text-white font-medium py-2 px-5 rounded-lg hover:bg-indigo-500 transition-colors gap-2 group cursor-pointer"
-                  onClick={() => {
-                    setFileData({
-                      name: value.name,
-                      expiry_date: value.expiry_date,
-                      pin: value.pin,
-                      data_link: value.data_link,
-                      id: value.id,
-                    });
-                    const newlink = link + "/file";
-                    router.push(newlink);
-                  }}
-                >
-                  <p>Open</p>
-                  <SiChainguard className="group-hover:text-2xl transition-all ease-in-out " />
-                </div>
-
-                <div className=" absolute -right-1  bg-emerald-600 p-2 rounded-3xl -top-2">
-                  <FaFileShield />
-                </div>
-              </div>
-            );
-          })}
-        </div>
+              );
+            })}
+          </div>
+        ) : (
+          <div className="text-center flex justify-center items-center flex-col gap-4">
+            <Lottie
+              animationData={EmptyStateAni}
+              className="md:w-100 w-80 h-100"
+            />
+            <p className="font-bold">Nothing at all, dude</p>
+          </div>
+        )}
       </div>
     </div>
   );

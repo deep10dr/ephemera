@@ -30,7 +30,7 @@ export const ThemeProviderComponent = ({
     : "bg-[#0F172A] text-white";
 
   return (
-    <ThemeContextProvider.Provider value={{ theme, setTheme, themeValue }}>
+    <ThemeContextProvider.Provider value={{ theme, setTheme, themeValue }} >
       {children}
     </ThemeContextProvider.Provider>
   );
