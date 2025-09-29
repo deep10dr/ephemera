@@ -8,17 +8,20 @@ import { motion, AnimatePresence } from "framer-motion";
 import { useRouter } from "next/navigation";
 const Lottie = dynamic(() => import("lottie-react"), { ssr: false });
 import { getUserWithExpiry } from "@/utils/storage";
-// Import JSON only once
+import { useTheme } from "../context/ThemeContext";
+
 import source1 from "../animations/secure.json";
 import source from "../animations/secure1.json";
 import source2 from "../animations/secure2.json";
+
+export const stlyes = "";
 
 export default function Page() {
   const data = useMemo(() => [source, source1, source2], []);
   const [current, setCurrent] = useState(0);
   const navigation = useRouter();
+  const { theme, setTheme, themeValue } = useTheme();
 
-  // Handlers memoized for better performance
   const handleNext = useCallback(() => {
     setCurrent((prev) => (prev === data.length - 1 ? 0 : prev + 1));
   }, [data.length]);
@@ -37,7 +40,9 @@ export default function Page() {
   }
 
   return (
-    <div className="w-full min-h-screen  flex flex-col items-center p-0 m-0">
+    <div
+      className={`w-full min-h-screen  flex flex-col items-center p-0 m-0 ${themeValue} `}
+    >
       <NavBar />
 
       <div className="w-full flex flex-col items-center">
@@ -63,13 +68,13 @@ export default function Page() {
 
         {/* Content Text */}
         <motion.p
-          className="mt-8 text-center text-gray-300 md:text-lg text-base max-w-xl leading-relaxed"
+          className="mt-8 text-center  md:text-lg text-base max-w-xl leading-relaxed"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.5, duration: 0.8 }}
         >
           Ephemera keeps your sensitive files safe with{" "}
-          <span className="text-cyan-400 font-semibold">
+          <span className="text-[#2563eb] font-semibold">
             end-to-end encryption
           </span>
           , auto-expiring links, and unmatched privacy.

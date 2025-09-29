@@ -91,7 +91,6 @@ export default function Page() {
 
   return (
     <div className="w-full min-h-screen flex justify-center items-center relative overflow-hidden bg-slate-800">
-      {/* Conditionally render the viewer only when fully unlocked and link is ready */}
       {unlocked && fileLink && (
         <div className="w-full min-h-screen">
           <Viewer file={fileLink} />
@@ -115,8 +114,6 @@ export default function Page() {
           </motion.div>
         )}
       </AnimatePresence>
-
-      {/* Show the unlock modal only if the file is not yet unlocked */}
       {!unlocked && (
         <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-max rounded-2xl h-max flex justify-center items-center bg-[#1E293B] p-6 flex-col gap-5 shadow-2xl">
           <div className="text-center">

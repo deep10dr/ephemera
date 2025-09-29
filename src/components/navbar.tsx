@@ -6,7 +6,9 @@ import { IoIosNotifications } from "react-icons/io";
 import { IoMdSettings } from "react-icons/io";
 import { MdAccessTimeFilled } from "react-icons/md";
 import { MdCallReceived } from "react-icons/md";
-
+import { useTheme } from "../context/ThemeContext";
+import { HiSun } from "react-icons/hi";
+import { BsMoonStarsFill } from "react-icons/bs";
 import {
   retriveNotification,
   retriveUserName,
@@ -19,7 +21,6 @@ import dynamic from "next/dynamic";
 
 const Lottie = dynamic(() => import("lottie-react"), { ssr: false });
 
-
 interface userDetails {
   name: string;
   user_id: string;
@@ -31,7 +32,7 @@ export default function NavBar() {
   const [notifData, setNotifData] =
     useState<retriveNotificationInterface | null>();
   const router = useRouter();
-
+  const { theme, setTheme } = useTheme();
   const date = new Date();
   const [username, setUserName] = useState([""]);
   useEffect(() => {
@@ -65,8 +66,12 @@ export default function NavBar() {
   }, [name, show]);
 
   return (
-    <header className="flex justify-between items-center w-full px-6 py-4 shadow-md relative">
-      <h1 className="md:text-4xl text-3xl font-extrabold text-white tracking-wide">
+    <header
+      className={`flex justify-between items-center w-full px-6 py-4 shadow-md relative ${
+        theme ? "bg-[#1E293B] text-white" : "bg-[#cbd5e1] text-[#0F172A]"
+      } `}
+    >
+      <h1 className={`md:text-4xl text-3xl font-extrabold tracking-wide`}>
         Ephemera
       </h1>
       {show && (
@@ -133,7 +138,19 @@ export default function NavBar() {
         </div>
       )}
 
-      <div className="relative md:w-25 w-20  h-10 rounded-full overflow-hidden bg-[#1E293B] flex justify-center items-center md:gap-8 gap-5">
+      <div
+        className={`relative md:w-35  h-10 rounded-full overflow-hidden bg-[#1E293B] flex justify-center items-center md:gap-4 gap-2 px-1 ${
+          theme ? "text-[#1E293B]  bg-[#e2e8f0] " : "text-white"
+        } `}
+      >
+        <div onClick={() => setTheme((prev) => !prev)} className={`ms-2 `}>
+          {theme ? (
+            <HiSun className="h-5 w-5 hover:animate-shake cursor-pointer" />
+          ) : (
+            <BsMoonStarsFill className="h-3.5 w-3.5 hover:animate-shake cursor-pointer" />
+          )}
+        </div>
+
         <IoIosNotifications
           className="h-5 w-5 hover:animate-shake cursor-pointer"
           onClick={() => setShow((prev) => !prev)}
